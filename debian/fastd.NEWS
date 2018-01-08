@@ -1,0 +1,7 @@
+fastd (18-3) unstable; urgency=medium
+
+  The fastd init script configured in /etc/default/fastd is considered
+  deprecated, please set AUTOSTART to "none" there and use the instanced
+  systemd unit fastd@.service instead.
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Mon, 08 Jan 2018 20:48:21 +0100

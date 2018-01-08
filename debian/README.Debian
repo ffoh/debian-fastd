@@ -1,0 +1,8 @@
+fastd
+=====
+
+We had issues with the systemd .service file distributed with the package.
+These are resolved. More detailed instructions on fastd configuration are
+in preparation.
+
+-- Steffen Moeller  Fri, 13 May 2016 13:43:04 +0200

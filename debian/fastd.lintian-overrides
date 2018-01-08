@@ -1,0 +1,3 @@
+# Users should use the instanced fastd@.service, the generic service
+# configured in /etc/default/fastd is deprecated
+fastd binary: systemd-no-service-for-init-script

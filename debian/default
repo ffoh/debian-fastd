@@ -1,0 +1,13 @@
+# This is the configuration file for /etc/init.d/fastd
+
+#
+# This configuration file is DEPRECATED! Please set autostart to "none" in
+# this file and use the instanced systemd unit fastd@.service
+#
+
+#
+# Start only these VPNs automatically via init script.
+# Allowed values are "all", "none" or space separated list of
+# names of the VPNs. If empty, "all" is assumed.
+#
+AUTOSTART="none"

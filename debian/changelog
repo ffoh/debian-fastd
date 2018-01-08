@@ -1,0 +1,133 @@
+fastd (18-3) unstable; urgency=medium
+
+  * Update to new Debian policy and fix lintian problems.
+  * Deprecate old fastd init script.
+  * Fix build against libsodium 1.0.13+ (Closes: #886018).
+  * Fix runtime compatibility with OpenSSL 1.1.
+
+  * Upstream: Fixes AES128-based methods.
+
+  * Added -fomit-frame-pointer flag. (Steffen Moeller)
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Mon, 08 Jan 2018 20:48:21 +0100
+
+fastd (18-2) unstable; urgency=medium
+
+  * Fix operation under systemd (Closes: #823801).
+  * Enable link-time optimization
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Thu, 12 May 2016 23:02:41 +0200
+
+fastd (18-1) unstable; urgency=low
+
+  * New upstream release
+  * Introduced hardening
+  * Removed fastd-dbg package
+
+ -- Haiko Helmholz <jo-travolti@t-online.de>  Tue, 05 Apr 2016 20:38:51 +0200
+
+fastd (17-4) unstable; urgency=low
+
+  * Initial upload (Closes: #801466).
+  * Build against libsodium instead of libnacl
+
+    Fixes salsa20/salsa2012 on x86 systems without SSE (e.g. Geode CPUs)
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Mon, 22 Jun 2015 23:58:01 +0200
+
+fastd (17-3) UNRELEASED; urgency=low
+
+  * Build binary with optimization
+  * Add fastd-dbg package
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Sun, 31 May 2015 21:18:35 +0200
+
+fastd (17-2) UNRELEASED; urgency=low
+
+  * Rebuild against versioned libuecc
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Fri, 30 Jan 2015 08:44:31 +0100
+
+fastd (17-1) UNRELEASED; urgency=low
+
+  * fastd v17 release
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Thu, 29 Jan 2015 07:30:09 +0100
+
+fastd (16-1) UNRELEASED; urgency=low
+
+  * fastd v16 release
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Sat, 15 Nov 2014 18:35:49 +0100
+
+fastd (15-1) UNRELEASED; urgency=low
+
+  * fastd v15 release
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Wed, 12 Nov 2014 02:33:44 +0100
+
+fastd (14-1) UNRELEASED; urgency=low
+
+  * fastd v14 release
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Mon, 30 Jun 2014 22:03:25 +0200
+
+fastd (12-1) UNRELEASED; urgency=low
+
+  * fastd v12 release
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Fri, 14 Mar 2014 14:47:08 +0100
+
+fastd (11-1) UNRELEASED; urgency=low
+
+  * fastd v11 release
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Sun, 29 Dec 2013 14:16:51 +0100
+
+fastd (10-1) UNRELEASED; urgency=low
+
+  * fastd v10 release
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Fri, 11 Oct 2013 17:02:59 +0200
+
+fastd (9-2) UNRELEASED; urgency=low
+
+  * Initscript improvements
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Sat, 07 Sep 2013 20:45:18 +0200
+
+fastd (9-1) UNRELEASED; urgency=low
+
+  * fastd v9 release
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Sat, 07 Sep 2013 19:59:08 +0200
+
+fastd (8-2) UNRELEASED; urgency=low
+
+  * Add init script
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Tue, 12 Mar 2013 18:39:49 +0100
+
+fastd (8-1) UNRELEASED; urgency=low
+
+  * fastd v8 release
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Sun, 10 Mar 2013 18:45:09 +0100
+
+fastd (7-1) UNRELEASED; urgency=low
+
+  * New release
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Thu, 10 Jan 2013 18:37:51 +0100
+
+fastd (6-1) UNRELEASED; urgency=low
+
+  * fastd v6 release
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Sat, 10 Nov 2012 18:28:29 +0100
+
+fastd (0.5-1) UNRELEASED; urgency=low
+
+  * fastd v0.5 release
+
+ -- Matthias Schiffer <mschiffer@universe-factory.net>  Sat, 06 Oct 2012 18:16:22 +0200

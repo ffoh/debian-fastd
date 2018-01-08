@@ -1,0 +1,36 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+#export DH_VERBOSE=1
+
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
+
+CFLAGS += -fomit-frame-pointer
+
+%:
+	dh $@ 
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		-DCMAKE_BUILD_TYPE=RELWITHDEBINFO \
+		-DENABLE_OPENSSL=ON \
+		-DENABLE_SYSTEMD=ON \
+		-DENABLE_LIBSODIUM=ON \
+		-DENABLE_LTO=ON \
+		-DCMAKE_AR=/usr/bin/gcc-ar \
+		-DCMAKE_NM=/usr/bin/gcc-nm \
+		-DCMAKE_RANLIB=/usr/bin/gcc-ranlib \
+		-DWITH_CIPHER_AES128_CTR_NACL=OFF
+
+override_dh_install:
+	dh_install
+	install -dm755 $(CURDIR)/debian/fastd/etc/fastd
+	install -m644 doc/examples/fastd@.service $(CURDIR)/debian/fastd/lib/systemd/system/fastd@.service
+
+override_dh_installinit:
+	dh_installinit --no-start -- defaults 16 80
+
+override_dh_clean:
+	dh_clean
+	rm -rf obj*
