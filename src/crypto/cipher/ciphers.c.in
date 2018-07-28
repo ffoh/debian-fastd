@@ -1,0 +1,124 @@
+/*
+  Copyright (c) 2012-2016, Matthias Schiffer <mschiffer@universe-factory.net>
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+    1. Redistributions of source code must retain the above copyright notice,
+       this list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
+       and/or other materials provided with the distribution.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/**
+   \file
+
+   Generated lists of ciphers and their implementations
+*/
+
+
+#include <src/crypto.h>
+#include <src/fastd.h>
+
+
+@CIPHER_DEFINITIONS@
+
+/** A cipher implementation */
+typedef struct fastd_cipher_impl {
+	const char *name;			/**< The name of the cipher implementation */
+	const fastd_cipher_t *impl;		/**< The cipher implementation */
+} fastd_cipher_impl_t;
+
+/** A cipher */
+typedef struct cipher_entry {
+	const char *name;			/**< The name of the cipher */
+	const fastd_cipher_info_t *info;	/**< The associated cipher information */
+	const fastd_cipher_impl_t *impls;	/**< NULL-terminated array of cipher implementations */
+} cipher_entry_t;
+
+@CIPHER_IMPLS@
+
+/** The list of supported ciphers */
+static const cipher_entry_t ciphers[] = { @CIPHER_LIST@
+};
+
+/** The list of chosen cipher implementations */
+static const fastd_cipher_t *cipher_conf[array_size(ciphers)] = {};
+
+
+/** Checks if a cipher implementation is available on the runtime platform */
+static inline bool cipher_available(const fastd_cipher_t *cipher) {
+	return (!cipher->available) || cipher->available();
+}
+
+void fastd_cipher_init(void) {
+	size_t i, j;
+	for (i = 0; i < array_size(ciphers); i++) {
+		for (j = 0; ciphers[i].impls[j].impl; j++) {
+			if (cipher_available(ciphers[i].impls[j].impl))
+				break;
+		}
+
+		cipher_conf[i] = ciphers[i].impls[j].impl;
+	}
+}
+
+bool fastd_cipher_config(const char *name, const char *impl) {
+	size_t i;
+	for (i = 0; i < array_size(ciphers); i++) {
+		if (!strcmp(ciphers[i].name, name)) {
+			size_t j;
+			for (j = 0; ciphers[i].impls[j].impl; j++) {
+				if (!strcmp(ciphers[i].impls[j].name, impl)) {
+					if (!cipher_available(ciphers[i].impls[j].impl))
+						return false;
+
+					cipher_conf[i] = ciphers[i].impls[j].impl;
+					return true;
+				}
+			}
+
+			return false;
+		}
+	}
+
+	return false;
+}
+
+const fastd_cipher_info_t * fastd_cipher_info_get_by_name(const char *name) {
+	size_t i;
+	for (i = 0; i < array_size(ciphers); i++) {
+		if (strcmp(ciphers[i].name, name))
+			continue;
+
+		if (cipher_conf[i])
+			return ciphers[i].info;
+
+		break;
+	}
+
+	return NULL;
+}
+
+const fastd_cipher_t * fastd_cipher_get(const fastd_cipher_info_t *info) {
+	size_t i;
+	for (i = 0; i < array_size(ciphers); i++) {
+		if (ciphers[i].info == info)
+			return cipher_conf[i];
+	}
+
+	return NULL;
+}

@@ -1,0 +1,124 @@
+/*
+  Copyright (c) 2012-2016, Matthias Schiffer <mschiffer@universe-factory.net>
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+    1. Redistributions of source code must retain the above copyright notice,
+       this list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
+       and/or other materials provided with the distribution.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/**
+   \file
+
+   Generated lists of MACs and their implementations
+*/
+
+
+#include <src/crypto.h>
+#include <src/fastd.h>
+
+
+@MAC_DEFINITIONS@
+
+/** A MAC implementation */
+typedef struct fastd_mac_impl {
+	const char *name;			/**< The name of the MAC implementation */
+	const fastd_mac_t *impl;		/**< The MAC implementation */
+} fastd_mac_impl_t;
+
+/** A MAC */
+typedef struct mac_entry {
+	const char *name;			/**< The name of the MAC */
+	const fastd_mac_info_t *info;		/**< The associated MAC information */
+	const fastd_mac_impl_t *impls;		/**< NULL-terminated array of MAC implementations */
+} mac_entry_t;
+
+@MAC_IMPLS@
+
+/** The list of supported MACs */
+static const mac_entry_t macs[] = { @MAC_LIST@
+};
+
+/** The list of chosen MAC implementations */
+static const fastd_mac_t *mac_conf[array_size(macs)] = {};
+
+
+/** Checks if a MAC implementation is available on the runtime platform */
+static inline bool mac_available(const fastd_mac_t *mac) {
+	return (!mac->available) || mac->available();
+}
+
+void fastd_mac_init(void) {
+	size_t i, j;
+	for (i = 0; i < array_size(macs); i++) {
+		for (j = 0; macs[i].impls[j].impl; j++) {
+			if (mac_available(macs[i].impls[j].impl))
+				break;
+		}
+
+		mac_conf[i] = macs[i].impls[j].impl;
+	}
+}
+
+bool fastd_mac_config(const char *name, const char *impl) {
+	size_t i;
+	for (i = 0; i < array_size(macs); i++) {
+		if (!strcmp(macs[i].name, name)) {
+			size_t j;
+			for (j = 0; macs[i].impls[j].impl; j++) {
+				if (!strcmp(macs[i].impls[j].name, impl)) {
+					if (!mac_available(macs[i].impls[j].impl))
+						return false;
+
+					mac_conf[i] = macs[i].impls[j].impl;
+					return true;
+				}
+			}
+
+			return false;
+		}
+	}
+
+	return false;
+}
+
+const fastd_mac_info_t * fastd_mac_info_get_by_name(const char *name) {
+	size_t i;
+	for (i = 0; i < array_size(macs); i++) {
+		if (strcmp(macs[i].name, name))
+			continue;
+
+		if (mac_conf[i])
+			return macs[i].info;
+
+		break;
+	}
+
+	return NULL;
+}
+
+const fastd_mac_t * fastd_mac_get(const fastd_mac_info_t *info) {
+	size_t i;
+	for (i = 0; i < array_size(macs); i++) {
+		if (macs[i].info == info)
+			return mac_conf[i];
+	}
+
+	return NULL;
+}
